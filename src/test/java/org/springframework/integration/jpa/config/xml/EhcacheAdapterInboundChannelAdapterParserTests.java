@@ -24,7 +24,7 @@ import org.springframework.integration.channel.AbstractMessageChannel;
 import org.springframework.integration.endpoint.SourcePollingChannelAdapter;
 import org.springframework.integration.test.util.TestUtils;
 
-import org.ehcache.myapp.core.EhcacheAdapterExecutor;
+import org.ehcache.siehcache.core.EhcacheAdapterExecutor;
 
 /**
  * @author Glenn Renfro

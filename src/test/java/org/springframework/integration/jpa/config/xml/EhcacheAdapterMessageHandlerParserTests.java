@@ -24,7 +24,7 @@ import org.springframework.integration.endpoint.EventDrivenConsumer;
 import org.springframework.integration.jpa.message.EhCacheMessage;
 import org.springframework.integration.test.util.TestUtils;
 
-import org.ehcache.myapp.core.EhcacheAdapterExecutor;
+import org.ehcache.siehcache.core.EhcacheAdapterExecutor;
 
 /**
  *

@@ -15,8 +15,8 @@ package org.springframework.integration.jpa.config.xml;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import org.ehcache.myapp.core.EhcacheAdapterExecutor;
-import org.ehcache.myapp.outbound.EhcacheAdapterOutboundGateway;
+import org.ehcache.siehcache.core.EhcacheAdapterExecutor;
+import org.ehcache.siehcache.outbound.EhcacheAdapterOutboundGateway;
 import org.junit.After;
 import org.junit.Test;
 import org.springframework.context.ConfigurableApplicationContext;
