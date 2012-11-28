@@ -1,0 +1,6 @@
+org.ehcache.myapp
+org.ehcache.myapp.config.xml
+org.ehcache.myapp.core
+org.ehcache.myapp.inbound
+org.ehcache.myapp.outbound
+org.ehcache.myapp.support

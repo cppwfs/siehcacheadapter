@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.ehcache.adapter</groupId>
+  <artifactId>SIEhCache</artifactId>
+  <version>1.0.0.BUILD-SNAPSHOT</version>
+  <name>Spring Integration EhcacheAdapter Adapter</name>
+  <description>Spring Integration EhcacheAdapter Adapter</description>
+  <url>https://github.com/SpringSource/spring-integration</url>
+  <organization>
+    <name>SpringSource</name>
+    <url>http://springsource.org</url>
+  </organization>
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <id>not specified</id>
+      <name>Glenn Renfro</name>
+      <email>not specified</email>
+    </developer>
+  </developers>
+  <scm>
+    <connection>scm:git:git://github.com/SpringSource/spring-integration</connection>
+    <developerConnection>scm:git:git://github.com/SpringSource/spring-integration</developerConnection>
+    <url>https://github.com/SpringSource/spring-integration</url>
+  </scm>
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-tx</artifactId>
+      <version>3.1.1.RELEASE</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.jackson</groupId>
+      <artifactId>jackson-mapper-asl</artifactId>
+      <version>1.9.2</version>
+      <scope>compile</scope>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>net.sf.ehcache</groupId>
+      <artifactId>ehcache-core</artifactId>
+      <version>2.6.0</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.integration</groupId>
+      <artifactId>spring-integration-core</artifactId>
+      <version>2.1.2.RELEASE</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.amqp</groupId>
+      <artifactId>spring-rabbit</artifactId>
+      <version>1.1.0.RELEASE</version>
+      <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>spring-beans</artifactId>
+          <groupId>org.springframework</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>spring-core</artifactId>
+          <groupId>org.springframework</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>spring-context</artifactId>
+          <groupId>org.springframework</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>spring-aop</artifactId>
+          <groupId>org.springframework</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>spring-oxm</artifactId>
+          <groupId>org.springframework</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>spring-tx</artifactId>
+          <groupId>org.springframework</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+  </dependencies>
+</project>
