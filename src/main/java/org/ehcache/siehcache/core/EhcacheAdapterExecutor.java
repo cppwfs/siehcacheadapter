@@ -53,10 +53,6 @@ public class EhcacheAdapterExecutor implements InitializingBean {
 	 */
 	public Object executeOutboundOperation(final Message<?> message) {
 
-		if (logger.isWarnEnabled()) {
-			logger.warn("Logic not implemented, yet.");
-			System.out.println(message.getPayload());
-		}
 
 		return message.getPayload();
 

@@ -23,10 +23,7 @@ import net.sf.ehcache.config.CacheConfiguration;
 
 import org.ehcache.siehcache.EhcacheAdapterHeaders;
 import org.ehcache.siehcache.core.EhcacheAdapterExecutor;
-import org.springframework.beans.ConfigurablePropertyAccessor;
-import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.integration.Message;
-import org.springframework.integration.config.xml.IntegrationNamespaceUtils;
 import org.springframework.integration.handler.AbstractReplyProducingMessageHandler;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.util.Assert;
@@ -45,8 +42,10 @@ public class EhcacheAdapterOutboundGateway extends
 											// true for outbound-gateway
 	private static String CACHE_MANAGER_NAME = "glenncache";
 	private static String CACHE_NAME = "myCache";
+	public String cacheManagerName;
 	public String ehcacheXml;
 	public String cache;
+	public CacheManager mgr = null;
 
 	public String getCache() {
 		return cache;
@@ -86,13 +85,36 @@ public class EhcacheAdapterOutboundGateway extends
 	@Override
 	protected void onInit() {
 		super.onInit();
-		System.out.println("INIT");
-		CacheManager mgr = CacheManager.getCacheManager(CACHE_MANAGER_NAME);
-		if (mgr == null) {
-			mgr = createNewManager(CACHE_MANAGER_NAME);
+		if (cacheManagerName == null) {
+			setCacheManagerName(CACHE_MANAGER_NAME);
 		}
-
-		
+		if (ehcacheXml == null) {
+			logger.info("ehcacheXml not set using defaults");
+			mgr = getDefaultCacheManager();
+			return;
+		} else {
+			try {
+				mgr = new CacheManager(ehcacheXml); // Since it wasn't present
+													// let's load the cache data
+													// from the ehcache.xml
+			} catch (Exception e) {
+// OK lets check to see if the cache was already initialized.
+				mgr = CacheManager.getCacheManager(cacheManagerName);
+				if(mgr == null){
+					// Well if the name isn't present get the default instance.
+					mgr = CacheManager.getInstance();
+				}
+				if(mgr !=null){
+					return;
+				}
+				// Since no cache has been found and getting the ehcache xml failed we'll create a default.
+				logger.warn(e.getMessage());
+				e.printStackTrace();
+				logger.warn("The ehcacheXml " + ehcacheXml
+						+ " is invalid.  Using Defaults.");
+				mgr = getDefaultCacheManager();
+			}
+		}
 	}
 
 	protected CacheManager createNewManager(String cacheName) {
@@ -108,7 +130,6 @@ public class EhcacheAdapterOutboundGateway extends
 		cfg.setMaxBytesLocalHeap("25m");
 		Cache cache = new Cache(cfg);
 		mgr.addCache(cache);
-
 	}
 
 	@Override
@@ -118,11 +139,9 @@ public class EhcacheAdapterOutboundGateway extends
 
 		result = this.ehcacheadapterExecutor
 				.executeOutboundOperation(requestMessage);
-		System.out.println(ehcacheXml);
-		System.out.println(cache);
-
 		try {
-			if(cache == null){
+			if (cache == null) {
+				logger.info("Cache is not set using default.");
 				cache = CACHE_NAME;
 			}
 			Cache cacheInstance = CacheManager.getInstance().getCache(cache);
@@ -130,8 +149,6 @@ public class EhcacheAdapterOutboundGateway extends
 				createCache(CacheManager.getInstance());
 				cacheInstance = CacheManager.getInstance().getCache(cache);
 			}
-			
-
 			if (getCommand(requestMessage).equals(EhcacheAdapterHeaders.PUT)) {
 				putData(requestMessage, cacheInstance);
 			} else {
@@ -141,14 +158,15 @@ public class EhcacheAdapterOutboundGateway extends
 				}
 			}
 		} catch (Exception e) {
-			System.out.println(CacheManager.getInstance());
+			logger.warn("An Exception for Cache " + cache + " has occured. ==>"
+					+ e.getMessage());
 			e.printStackTrace();
+
 		}
 		if (result == null || !producesReply) {
 
 			return null;
 		}
-		
 		return MessageBuilder.withPayload(result)
 				.copyHeaders(requestMessage.getHeaders()).build();
 	}
@@ -157,9 +175,17 @@ public class EhcacheAdapterOutboundGateway extends
 		return (String) msg.getHeaders().get(EhcacheAdapterHeaders.COMMAND);
 	}
 
-	public String getKey(Message msg) {
-		
-		return (String) msg.getHeaders().get(EhcacheAdapterHeaders.KEY);
+	public Element getElement(Message msg) {
+		Element payload = null;
+		try {
+			payload = (Element) msg.getPayload();
+		} catch (ClassCastException cce) {
+			logger.error("You attempted to execute a "
+					+ getCommand(msg)
+					+ " on a non net.sf.ehcache.Element.  The outbound adapter usese net.sf.ehcache.Element as its payload");
+			throw cce;
+		}
+		return payload;
 	}
 
 	/**
@@ -175,17 +201,33 @@ public class EhcacheAdapterOutboundGateway extends
 	}
 
 	public void putData(Message message, Cache cache) {
-		System.out.println("Putting Data for "+getKey(message) );
-		cache.put(new Element(getKey(message), message.getPayload()));
+		System.out.println("Putting Data for " + getElement(message));
+		cache.put(getElement(message));
 
 	}
 
 	public Object getData(Message message, Cache cache) {
-		Element val = cache.get(getKey(message));
-		System.out.println("Getting Data for "+getKey(message) );
+		Element val = cache.get(getElement(message).getKey());
 		if (val == null) {
-			return null;
+			return getElement(message);
 		}
-		return val.getValue();
+		return val;
 	}
+
+	public CacheManager getDefaultCacheManager() {
+		CacheManager mgr = CacheManager.getCacheManager(cacheManagerName);
+		if (mgr == null) {
+			mgr = createNewManager(cacheManagerName);
+		}
+		return mgr;
+	}
+
+	public String getCacheManagerName() {
+		return cacheManagerName;
+	}
+
+	public void setCacheManagerName(String cacheManagerName) {
+		this.cacheManagerName = cacheManagerName;
+	}
+
 }

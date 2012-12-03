@@ -34,7 +34,7 @@ public class EhcacheAdapterHeaders {
 	public static final String COMMAND = "COMMAND";
 	public static final String PUT_WITH_WRITER = "PUT_WITH_WRITER";
 	public static final String KEY="KEY";
-	
+	public static final String FOUND="FOUND";
 	
 
 	/** Noninstantiable utility class */
