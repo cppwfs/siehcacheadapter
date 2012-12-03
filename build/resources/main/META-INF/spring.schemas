@@ -1,2 +1,0 @@
-http\://www.springframework.org/schema/integration/ehcacheadapter/spring-integration-ehcacheadapter-2.2.xsd=org/springframework/integration/ehcacheadapter/config/xml/spring-integration-ehcacheadapter-2.2.xsd
-http\://www.springframework.org/schema/integration/ehcacheadapter/spring-integration-ehcacheadapter.xsd=org/ehcache/myapp/config/xml/spring-integration-ehcacheadapter-2.2.xsd
