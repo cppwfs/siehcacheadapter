@@ -45,6 +45,7 @@ public class EhcacheAdapterOutboundGatewayParser extends AbstractConsumerEndpoin
 		final String replyChannel = gatewayElement.getAttribute("reply-channel");
 		IntegrationNamespaceUtils.setValueIfAttributeDefined(ehcacheadapterOutboundGatewayBuilder, gatewayElement, "ehcacheXml");
 		IntegrationNamespaceUtils.setValueIfAttributeDefined(ehcacheadapterOutboundGatewayBuilder, gatewayElement, "cache");
+		IntegrationNamespaceUtils.setValueIfAttributeDefined(ehcacheadapterOutboundGatewayBuilder, gatewayElement, "cacheManagerName");
 
 
 		if (StringUtils.hasText(replyChannel)) {
@@ -52,8 +53,6 @@ public class EhcacheAdapterOutboundGatewayParser extends AbstractConsumerEndpoin
 		}
 
 		final BeanDefinitionBuilder ehcacheadapterExecutorBuilder = EhcacheAdapterParserUtils.getEhcacheAdapterExecutorBuilder(gatewayElement, parserContext);
-
-		IntegrationNamespaceUtils.setValueIfAttributeDefined(ehcacheadapterExecutorBuilder, gatewayElement, "example-property");
 
 		final BeanDefinition ehcacheadapterExecutorBuilderBeanDefinition = ehcacheadapterExecutorBuilder.getBeanDefinition();
 		final String gatewayId = this.resolveId(gatewayElement, ehcacheadapterOutboundGatewayBuilder.getRawBeanDefinition(), parserContext);

@@ -29,7 +29,7 @@ import org.springframework.integration.test.util.TestUtils;
 /**
  * @author Glenn Renfro
  * @since 1.0
- *
+ * 
  */
 public class EhcacheAdapterOutboundGatewayParserTests {
 
@@ -38,42 +38,99 @@ public class EhcacheAdapterOutboundGatewayParserTests {
 	private EventDrivenConsumer consumer;
 
 	@Test
-	public void testRetrievingJpaOutboundGatewayParser() throws Exception {
-		setUp("EhcacheAdapterOutboundGatewayParserTests.xml", getClass(), "ehcacheadapterOutboundGateway");
-
-
-		final AbstractMessageChannel inputChannel = TestUtils.getPropertyValue(this.consumer, "inputChannel", AbstractMessageChannel.class);
-
-		assertEquals("in", inputChannel.getComponentName());
-
-		final EhcacheAdapterOutboundGateway ehcacheadapterOutboundGateway = TestUtils.getPropertyValue(this.consumer, "handler", EhcacheAdapterOutboundGateway.class);
-
-		long sendTimeout = TestUtils.getPropertyValue(ehcacheadapterOutboundGateway, "messagingTemplate.sendTimeout", Long.class);
-
-		assertEquals(100, sendTimeout);
-
-		final EhcacheAdapterExecutor ehcacheadapterExecutor = TestUtils.getPropertyValue(this.consumer, "handler.ehcacheadapterExecutor", EhcacheAdapterExecutor.class);
-
-		assertNotNull(ehcacheadapterExecutor);
-
-		final String exsampleProperty = TestUtils.getPropertyValue(ehcacheadapterExecutor, "ehcache_xml", String.class);
-
-		assertEquals("I am a sample property", exsampleProperty);
-		EhCacheMessage msg = new EhCacheMessage();
-		ehcacheadapterExecutor.executeOutboundOperation(msg);
+	public void testGetEhcacheXml() throws Exception {
+		setUp("EhcacheAdapterOutboundGatewayParserTests.xml", getClass(),
+				"ehcacheadapterOutboundGateway");
+		 EhcacheAdapterOutboundGateway ehcacheadapterOutboundGateway = TestUtils
+				.getPropertyValue(this.consumer, "handler",
+						EhcacheAdapterOutboundGateway.class);
+		assertEquals(
+				"/Users/glennrenfro/Documents/workspace-sts-2.9.2.RELEASE/SIEhCacheTestApp/configs/ehcache.xml",
+				ehcacheadapterOutboundGateway.getEhcacheXml());
+		setUp("EhcacheAdapterOutboundGatewayParserTests.xml", getClass(),
+				"ehcacheadapterOutboundWithCacheManagerNoXml");
+		ehcacheadapterOutboundGateway = TestUtils
+				.getPropertyValue(this.consumer, "handler",
+						EhcacheAdapterOutboundGateway.class);
+		assertEquals(null,ehcacheadapterOutboundGateway.getEhcacheXml());
 		
-		ehcacheadapterExecutor.executeOutboundOperation(msg);
-		ehcacheadapterExecutor.executeOutboundOperation(msg);
+	}
+
+	@Test
+	public void testInputChannelParser() throws Exception {
+		setUp("EhcacheAdapterOutboundGatewayParserTests.xml", getClass(),
+				"ehcacheadapterOutboundGateway");
+
+		final AbstractMessageChannel inputChannel = TestUtils.getPropertyValue(
+				this.consumer, "inputChannel", AbstractMessageChannel.class);
+
+		assertEquals("getDataOutputChannel", inputChannel.getComponentName());
+
 	}
 
 	@Test
 	public void testJpaExecutorBeanIdNaming() throws Exception {
 
-		this.context = new ClassPathXmlApplicationContext("EhcacheAdapterOutboundGatewayParserTests.xml", getClass());
-		assertNotNull(context.getBean("ehcacheadapterOutboundGateway.ehcacheadapterExecutor", EhcacheAdapterExecutor.class));
+		this.context = new ClassPathXmlApplicationContext(
+				"EhcacheAdapterOutboundGatewayParserTests.xml", getClass());
+		assertNotNull(context.getBean(
+				"ehcacheadapterOutboundGateway.ehcacheadapterExecutor",
+				EhcacheAdapterExecutor.class));
 
 	}
 
+
+	@Test
+	public void timeOutTest() {
+		setUp("EhcacheAdapterOutboundGatewayParserTests.xml", getClass(),
+				"ehcacheadapterOutboundGateway");
+		final EhcacheAdapterOutboundGateway ehcacheadapterOutboundGateway = TestUtils
+				.getPropertyValue(this.consumer, "handler",
+						EhcacheAdapterOutboundGateway.class);
+
+		long sendTimeout = TestUtils.getPropertyValue(
+				ehcacheadapterOutboundGateway, "messagingTemplate.sendTimeout",
+				Long.class);
+
+		assertEquals(100, sendTimeout);
+	}
+	@Test
+	public void cacheManagerTest() {
+		setUp("EhcacheAdapterOutboundGatewayParserTests.xml", getClass(),
+				"ehcacheadapterOutboundWithCacheManager");
+		final EhcacheAdapterOutboundGateway ehcacheadapterOutboundGateway = TestUtils
+				.getPropertyValue(this.consumer, "handler",
+						EhcacheAdapterOutboundGateway.class);
+
+		assertEquals("myManager", ehcacheadapterOutboundGateway.getCacheManagerName());
+	}
+	@Test
+	public void executorTest() {
+		setUp("EhcacheAdapterOutboundGatewayParserTests.xml", getClass(),
+				"ehcacheadapterOutboundGateway");
+		final EhcacheAdapterExecutor ehcacheadapterExecutor = TestUtils
+				.getPropertyValue(this.consumer,
+						"handler.ehcacheadapterExecutor",
+						EhcacheAdapterExecutor.class);
+		assertNotNull(ehcacheadapterExecutor);
+		EhCacheMessage msg = new EhCacheMessage();
+		ehcacheadapterExecutor.executeOutboundOperation(msg);
+
+	}
+	@Test
+	public void cacheNameTest() {
+		setUp("EhcacheAdapterOutboundGatewayParserTests.xml", getClass(),
+				"ehcacheadapterOutboundWithCacheManager");
+		final EhcacheAdapterOutboundGateway ehcacheadapterOutboundGateway = TestUtils
+				.getPropertyValue(this.consumer, "handler",
+						EhcacheAdapterOutboundGateway.class);
+
+		assertEquals("mycache", ehcacheadapterOutboundGateway.getCache());
+	
+
+	}
+	
+	
 	@After
 	public void tearDown() {
 		if (context != null) {
@@ -82,8 +139,8 @@ public class EhcacheAdapterOutboundGatewayParserTests {
 	}
 
 	public void setUp(String name, Class<?> cls, String gatewayId) {
-		context    = new ClassPathXmlApplicationContext(name, cls);
-		consumer   = this.context.getBean(gatewayId, EventDrivenConsumer.class);
+		context = new ClassPathXmlApplicationContext(name, cls);
+		consumer = this.context.getBean(gatewayId, EventDrivenConsumer.class);
 	}
 
 }

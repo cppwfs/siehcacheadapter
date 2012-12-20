@@ -34,16 +34,22 @@
 		reply-channel="endChannel" reply-timeout="100" />
 
 	<int-ehcacheadapter:outbound-gateway
+		id="badSettingGateway" ehcacheXml="dasfkdsl.xml"
+		cache="mycache" auto-startup="true" order="1" request-channel="getDataOutputChannel"
+		reply-channel="endChannel" reply-timeout="100" />
+
+	<int-ehcacheadapter:outbound-gateway
 		id="ehcacheadapterOutboundWithCacheManager" ehcacheXml="/Users/glennrenfro/Documents/workspace-sts-2.9.2.RELEASE/SIEhCacheTestApp/configs/ehcache.xml"
 		cache="mycache" auto-startup="true" order="1" request-channel="getDataOutputChannel" cacheManagerName="myManager"
 		reply-channel="endChannel" reply-timeout="100" />
 
 	<int-ehcacheadapter:outbound-gateway
-		id="ehcacheadapterOutboundWithCacheManagerNoXml" 
-		cache="mycache" auto-startup="true" order="1" request-channel="getDataOutputChannel" cacheManagerName="myManager"
+		id="defaultSettingGateway" 
+		auto-startup="true" order="1" request-channel="getDataOutputChannel" 
 		reply-channel="endChannel" reply-timeout="100" />
 		
 <!-- **************  A terminating channel, to show the result before handing off back to application******** -->
+<int:channel id="terminate" />
 	<int:service-activator id="endOfLine"
 		input-channel="endChannel" ref="cacheCaller" method="printData" />
 		<!-- ********** The beans that hit call setup the call or get the data from the data source -->

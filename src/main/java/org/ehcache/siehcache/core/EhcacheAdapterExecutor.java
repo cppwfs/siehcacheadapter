@@ -81,6 +81,4 @@ public class EhcacheAdapterExecutor implements InitializingBean {
 		return MessageBuilder.fromMessage(requestMessage).build();
 	}
 
-
-
 }

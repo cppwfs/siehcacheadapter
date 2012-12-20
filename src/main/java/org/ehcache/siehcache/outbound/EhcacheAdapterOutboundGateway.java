@@ -40,7 +40,7 @@ public class EhcacheAdapterOutboundGateway extends
 	private final EhcacheAdapterExecutor ehcacheadapterExecutor;
 	private boolean producesReply = true; // false for outbound-channel-adapter,
 											// true for outbound-gateway
-	private static String CACHE_MANAGER_NAME = "glenncache";
+	private static String CACHE_MANAGER_NAME = "DefaultCache";
 	private static String CACHE_NAME = "myCache";
 	public String cacheManagerName;
 	public String ehcacheXml;
@@ -88,20 +88,24 @@ public class EhcacheAdapterOutboundGateway extends
 		if (cacheManagerName == null) {
 			setCacheManagerName(CACHE_MANAGER_NAME);
 		}
+		System.out.println(cacheManagerName);
 		if (ehcacheXml == null) {
-			logger.info("ehcacheXml not set using defaults");
+			System.out.println("ehcacheXml not set using defaults");
 			mgr = getDefaultCacheManager();
 			return;
 		} else {
 			try {
+				System.out.println("Using Ehcache.xml");
 				mgr = new CacheManager(ehcacheXml); // Since it wasn't present
 													// let's load the cache data
 													// from the ehcache.xml
 			} catch (Exception e) {
 // OK lets check to see if the cache was already initialized.
+				System.out.println("Getting from Cachemanager for "+cacheManagerName);
 				mgr = CacheManager.getCacheManager(cacheManagerName);
 				if(mgr == null){
 					// Well if the name isn't present get the default instance.
+					System.out.println("Getting from Cachemanager Instance");
 					mgr = CacheManager.getInstance();
 				}
 				if(mgr !=null){
@@ -141,7 +145,7 @@ public class EhcacheAdapterOutboundGateway extends
 				.executeOutboundOperation(requestMessage);
 		try {
 			if (cache == null) {
-				logger.info("Cache is not set using default.");
+				System.out.println("Cache is not set using default.");
 				cache = CACHE_NAME;
 			}
 			Cache cacheInstance = CacheManager.getInstance().getCache(cache);
@@ -201,7 +205,6 @@ public class EhcacheAdapterOutboundGateway extends
 	}
 
 	public void putData(Message message, Cache cache) {
-		System.out.println("Putting Data for " + getElement(message));
 		cache.put(getElement(message));
 
 	}

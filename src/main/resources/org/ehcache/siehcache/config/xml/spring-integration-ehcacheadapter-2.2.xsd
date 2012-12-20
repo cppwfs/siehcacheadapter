@@ -193,6 +193,13 @@
 				</xsd:documentation>
 			</xsd:annotation>
 		</xsd:attribute>
+		<xsd:attribute name="cacheManagerName" use="optional" type="xsd:string">
+			<xsd:annotation>
+				<xsd:documentation>
+					The name of the cache manager for the gateway.
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
 	</xsd:attributeGroup>
 
 </xsd:schema>

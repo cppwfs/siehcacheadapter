@@ -30,7 +30,6 @@ public class EhcacheAdapterNamespaceHandler extends AbstractIntegrationNamespace
 	 * @see org.springframework.beans.factory.xml.NamespaceHandler#init()
 	 */
 	public void init() {
-		this.registerBeanDefinitionParser("outbound-channel-adapter", new EhcacheAdapterOutboundChannelAdapterParser());
 		this.registerBeanDefinitionParser("outbound-gateway", new EhcacheAdapterOutboundGatewayParser());
 	}
 }
