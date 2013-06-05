@@ -22,8 +22,8 @@ import org.junit.Test;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.integration.channel.AbstractMessageChannel;
+import org.springframework.integration.ehcache.message.EhCacheMessage;
 import org.springframework.integration.endpoint.EventDrivenConsumer;
-import org.springframework.integration.jpa.message.EhCacheMessage;
 import org.springframework.integration.test.util.TestUtils;
 
 /**
