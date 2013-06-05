@@ -29,10 +29,10 @@ import org.springframework.integration.support.MessageBuilder;
 import org.springframework.util.Assert;
 
 /**
- * 
+ *
  * @author Glenn Renfro
  * @since 1.0
- * 
+ *
  */
 public class EhcacheAdapterOutboundGateway extends
 		AbstractReplyProducingMessageHandler {
@@ -66,10 +66,10 @@ public class EhcacheAdapterOutboundGateway extends
 	/**
 	 * Constructor taking an {@link EhcacheAdapterExecutor} that wraps common
 	 * EhcacheAdapter Operations.
-	 * 
+	 *
 	 * @param ehcacheadapterExecutor
 	 *            Must not be null
-	 * 
+	 *
 	 */
 	public EhcacheAdapterOutboundGateway(
 			EhcacheAdapterExecutor ehcacheadapterExecutor) {
@@ -175,30 +175,33 @@ public class EhcacheAdapterOutboundGateway extends
 				.copyHeaders(requestMessage.getHeaders()).build();
 	}
 
-	public String getCommand(Message msg) {
+	private String getCommand(Message msg) {
 		return (String) msg.getHeaders().get(EhcacheAdapterHeaders.COMMAND);
 	}
-
+	private Object getKey(Message msg) {
+		return msg.getHeaders().get(EhcacheAdapterHeaders.KEY);
+	}
 	public Element getElement(Message msg) {
-		Element payload = null;
+		Element element = null;
 		try {
-			payload = (Element) msg.getPayload();
+			Object payload =  msg.getPayload();
+			element = new Element(getKey(msg),payload);
 		} catch (ClassCastException cce) {
 			logger.error("You attempted to execute a "
 					+ getCommand(msg)
 					+ " on a non net.sf.ehcache.Element.  The outbound adapter usese net.sf.ehcache.Element as its payload");
 			throw cce;
 		}
-		return payload;
+		return element;
 	}
 
 	/**
 	 * If set to 'false', this component will act as an Outbound Channel
 	 * Adapter. If not explicitly set this property will default to 'true'.
-	 * 
+	 *
 	 * @param producesReply
 	 *            Defaults to 'true'.
-	 * 
+	 *
 	 */
 	public void setProducesReply(boolean producesReply) {
 		this.producesReply = producesReply;
@@ -210,11 +213,12 @@ public class EhcacheAdapterOutboundGateway extends
 	}
 
 	public Object getData(Message message, Cache cache) {
-		Element val = cache.get(getElement(message).getKey());
-		if (val == null) {
-			return getElement(message);
+		Object result = null ;
+		Element val = cache.get(getKey(message));
+		if (val != null) {
+			result = val.getObjectValue();
 		}
-		return val;
+		return result;
 	}
 
 	public CacheManager getDefaultCacheManager() {

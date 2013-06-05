@@ -3,6 +3,7 @@ package org.ehcache.siehcache.outbound;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
@@ -23,10 +24,12 @@ public class EhcacheAdapterOutboundGatewayTests {
 
 	@Test
 	public void testNoCacheManager() {
+		String key = "1";
+		String value = "1 value";
 		//Test the Put
-		Element message = new Element("1","1 value");
-		Message msg = MessageBuilder.withPayload(message).setHeader(EhcacheAdapterHeaders.COMMAND,EhcacheAdapterHeaders.PUT)
-				.setHeader("replyChannel", "endChannel").build();
+
+		Message msg = MessageBuilder.withPayload(value).setHeader(EhcacheAdapterHeaders.COMMAND,EhcacheAdapterHeaders.PUT)
+				.setHeader("replyChannel", "endChannel").setHeader(EhcacheAdapterHeaders.KEY, key).build();
 
 		setUp("EhcacheAdapterOutboundGatewayTests.xml", getClass(),
 				"noCacheManagerGateway");
@@ -36,7 +39,7 @@ public class EhcacheAdapterOutboundGatewayTests {
 						EhcacheAdapterOutboundGateway.class);
 		assertNotNull(ehcacheadapterOutboundGateway.mgr);
 		ehcacheadapterOutboundGateway.handleMessage(msg);
-		message = ehcacheadapterOutboundGateway.mgr.getCache(ehcacheadapterOutboundGateway.getCache()).get("1");
+		Element message = ehcacheadapterOutboundGateway.mgr.getCache(ehcacheadapterOutboundGateway.getCache()).get("1");
 		assertNotNull(message);
 		assertEquals("1 value",message.getValue());
 		ehcacheadapterOutboundGateway.getDefaultCacheManager();
@@ -66,9 +69,10 @@ public class EhcacheAdapterOutboundGatewayTests {
 	@Test
 	public void testCreateCache() {
 		//Test the Put
-		Element message = new Element("1","1 value");
-		Message msg = MessageBuilder.withPayload(message).setHeader(EhcacheAdapterHeaders.COMMAND,EhcacheAdapterHeaders.PUT)
-				.setHeader("replyChannel", "endChannel").build();
+		String key = "2";
+		String value = "2 value";
+		Message msg = MessageBuilder.withPayload(value).setHeader(EhcacheAdapterHeaders.COMMAND,EhcacheAdapterHeaders.PUT)
+				.setHeader("replyChannel", "endChannel").setHeader(EhcacheAdapterHeaders.KEY, key).build();
 
 		setUp("EhcacheAdapterOutboundGatewayTests.xml", getClass(),
 				"noCacheGateway");
@@ -78,9 +82,9 @@ public class EhcacheAdapterOutboundGatewayTests {
 						EhcacheAdapterOutboundGateway.class);
 		assertNotNull(ehcacheadapterOutboundGateway.mgr);
 		ehcacheadapterOutboundGateway.handleMessage(msg);
-		message = ehcacheadapterOutboundGateway.mgr.getCache(ehcacheadapterOutboundGateway.getCache()).get("1");
+		Element message = ehcacheadapterOutboundGateway.mgr.getCache(ehcacheadapterOutboundGateway.getCache()).get("2");
 		assertNotNull(message);
-		assertEquals("1 value",message.getValue());
+		assertEquals("2 value",message.getValue());
 		ehcacheadapterOutboundGateway.getDefaultCacheManager();
 		CacheManager mgr = ehcacheadapterOutboundGateway.mgr;
 		assertNotNull(ehcacheadapterOutboundGateway.mgr);
@@ -112,34 +116,35 @@ public class EhcacheAdapterOutboundGatewayTests {
 	}
 
 	@Test
-	public void testHandleRequestMessageMessageOfQ() {
+	public void testHandleRequestInvalid() {
 		//Test the Put
-		Element message = new Element("1","1 value");
-		 Message msg = MessageBuilder.withPayload(message).setHeader(EhcacheAdapterHeaders.COMMAND,EhcacheAdapterHeaders.PUT)
-			.setHeader("replyChannel", "endChannel").build();
+		String key = "3";
+		String value = "3 value";
+		 Message msg = MessageBuilder.withPayload(value).setHeader(EhcacheAdapterHeaders.COMMAND,EhcacheAdapterHeaders.PUT)
+			.setHeader("replyChannel", "endChannel").setHeader(EhcacheAdapterHeaders.KEY, key).build();
 		 setUp("EhcacheAdapterOutboundGatewayTests.xml", getClass(),
 					"ehcacheadapterOutboundWithCacheManager");
 			final EhcacheAdapterOutboundGateway ehcacheadapterOutboundGateway = TestUtils
 					.getPropertyValue(this.consumer, "handler",
 							EhcacheAdapterOutboundGateway.class);
 			ehcacheadapterOutboundGateway.handleMessage(msg);
-			message = ehcacheadapterOutboundGateway.mgr.getCache(ehcacheadapterOutboundGateway.getCache()).get("1");
+			Element message = ehcacheadapterOutboundGateway.mgr.getCache(ehcacheadapterOutboundGateway.getCache()).get("3");
 			assertNotNull(message);
-			assertEquals("1 value",message.getValue());
+			assertEquals("3 value",message.getValue());
 		//Test the Get
 			msg = MessageBuilder.withPayload(message).setHeader(EhcacheAdapterHeaders.COMMAND,EhcacheAdapterHeaders.GET)
 					.setHeader("replyChannel", "endChannel").build();
 			ehcacheadapterOutboundGateway.handleMessage(msg);
+			Cache c = ehcacheadapterOutboundGateway.mgr.getCache(ehcacheadapterOutboundGateway.getCache());
+			int size = c.getSize();
 			//Test a bad put
-			msg = MessageBuilder.withPayload("CRAP").setHeader(EhcacheAdapterHeaders.COMMAND,EhcacheAdapterHeaders.PUT)
+			msg = MessageBuilder.withPayload("crap").setHeader(EhcacheAdapterHeaders.COMMAND,EhcacheAdapterHeaders.PUT)
 					.setHeader("replyChannel", "endChannel").build();
-			boolean isException = false;
-			try{
 				ehcacheadapterOutboundGateway.handleMessage(msg);
-			}catch(java.lang.Exception cce){
-				isException = true;
-			}
-			assertTrue(isException);
+			assertEquals(size, c.getSize());
+			message = ehcacheadapterOutboundGateway.mgr.getCache(ehcacheadapterOutboundGateway.getCache()).get("3");
+			assertNotNull(message);
+			assertEquals("3 value",message.getValue());
 
 	}
 

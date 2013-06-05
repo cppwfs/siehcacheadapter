@@ -38,7 +38,7 @@ public class CacheCallerImp{
 	public Object putData(Object message){
 		System.out.println("PUT");
 		return MessageBuilder.withPayload(message).setHeader(EhcacheAdapterHeaders.COMMAND,EhcacheAdapterHeaders.PUT)
-				.build();	
+				.build();
 	}
 
 	public Object getData(Object message){
@@ -47,9 +47,9 @@ public class CacheCallerImp{
 				.build();
 	}
 	public Object printData(Object message){
-		Element payload = (Element)message;
-		System.out.println("Payload is "+payload.getValue());
-		
+		Object payload = message;
+		System.out.println("Payload is "+payload);
+
 		return null;
 	}
 }
