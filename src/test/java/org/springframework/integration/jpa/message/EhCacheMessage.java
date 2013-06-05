@@ -7,7 +7,6 @@ import org.springframework.integration.MessageHeaders;
 
 public class EhCacheMessage implements Message<CacheMessage> {
 
-	@Override
 	public MessageHeaders getHeaders() {
 		// TODO Auto-generated method stub
 		HashMap<String,Object> map = new HashMap<String,Object>();
@@ -16,9 +15,8 @@ public class EhCacheMessage implements Message<CacheMessage> {
 		return headers;
 	}
 
-	@Override
 	public CacheMessage getPayload() {
-		
+
 		return new CacheMessage();
 	}
 

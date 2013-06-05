@@ -7,9 +7,9 @@
 		http://www.springframework.org/schema/integration
 		http://www.springframework.org/schema/integration/spring-integration-2.1.xsd
 		http://www.springframework.org/schema/integration/ehcacheadapter
-		file:///users/glennrenfro/Documents/workspace-sts-2.9.2.RELEASE/SIEhCache/src/main/resources/org/ehcache/siehcache/config/xml/spring-integration-ehcacheadapter-2.2.xsd">
+		classpath:org/ehcache/siehcache/config/xml/spring-integration-ehcacheadapter-2.2.xsd">
 
-	<!-- See also: http://static.springsource.org/spring-integration/reference/htmlsingle/#gateway-proxy 
+	<!-- See also: http://static.springsource.org/spring-integration/reference/htmlsingle/#gateway-proxy
 		http://www.eaipatterns.com/MessagingGateway.html -->
 
 	<!-- **************** Cache Aside ********************* -->
@@ -26,7 +26,7 @@
 		id="ehcacheGatewayGetData" ehcacheXml="/Users/glennrenfro/Documents/workspace-sts-2.9.2.RELEASE/SIEhCacheTestApp/configs/ehcache.xml" cache="mycache"
 		auto-startup="true" order="1" request-channel="getChannel"
 		reply-channel="validateChannel" reply-timeout="100" />
-		
+
 	<int:channel id="validateChannel" />
 	<int-ehcacheadapter:outbound-gateway
 		id="ehcacheadapterOutboundGateway" ehcacheXml="/Users/glennrenfro/Documents/workspace-sts-2.9.2.RELEASE/SIEhCacheTestApp/configs/ehcache.xml"
@@ -39,15 +39,15 @@
 		reply-channel="endChannel" reply-timeout="100" />
 
 	<int-ehcacheadapter:outbound-gateway
-		id="ehcacheadapterOutboundWithCacheManagerNoXml" 
+		id="ehcacheadapterOutboundWithCacheManagerNoXml"
 		cache="mycache" auto-startup="true" order="1" request-channel="getDataOutputChannel" cacheManagerName="myManager"
 		reply-channel="endChannel" reply-timeout="100" />
-		
+
 <!-- **************  A terminating channel, to show the result before handing off back to application******** -->
 	<int:service-activator id="endOfLine"
 		input-channel="endChannel" ref="cacheCaller" method="printData" />
 		<!-- ********** The beans that hit call setup the call or get the data from the data source -->
 	<bean id="cacheCaller" class="org.springframework.integration.jpa.util.CacheCallerImp" />
-		
-		
+
+
 </beans>

@@ -1,22 +1,14 @@
-Spring Integration EhcacheAdapter Adapter
+Spring Integration Ehcache Outbound Gateway
 =================================================
 
-Welcome to the Spring Integration Adapter Template. This template is meant as a starting point for new Spring Integration Adapters. This temaplate provides the following
-stubbed out components:
-
-* Outbound Channel Adapter
-* Outbound Gateway
-* Inbound Channel Adapter
+Welcome to the Spring Integration Ehcache Outbound Gateway . This gateway is intended to give your app access to ehcache.  
 
 # STS issues to be aware of
 
-* [STS-1790](https://issuetracker.springsource.com/browse/STS-1790) - Allow for more flexibility in defining top level packages in the Spring STS Template Wizard
+* the ehcache gateway does not appear in the Spring Integration Graph.  
 
 # FAQ
 
-## I need to add AOP Advices to my Adapters
-
-Use FactoryBeans that wrap your adapter. See JPA Adapter for example.
 
 ## More to come...
 
